@@ -2,27 +2,48 @@ import mysql.connector
 from mysql.connector import Error
 
 
-def create_database(connection, query):
-    cursor = connection.cursor()
-    try:
-        cursor.execute(query)
-        print("Database created successfully")
-    except Error as e:
-        print(f"The error '{e}' occurred")
+class BBalldataBase:
 
-
-def create_connection(host_name, user_name, user_password):
     connection = None
-    try:
-        connection = mysql.connector.connect(
-            host=host_name,
-            user=user_name,
-            passwd=user_password
-        )
-        print("Connection to MySQL DB successful")
-    except Error as e:
-        print(f"The error '{e}' occurred")
 
-    return connection
+    def __init__(self):
+        self.connection = None
 
-# connection = create_connection("localhost", "root", "")
+    def myFunc(self):
+        print("Hello my name is")
+
+    def connectToDb(self, hostName, userName, passWord, dbName):
+        try:
+            myConnection = mysql.connector.connect(
+                host=hostName,
+                user=userName,
+                passwd=passWord,
+                database=dbName
+            )
+            self.connection = myConnection
+            print("Connection to MySQL DB successful")
+        except Error as e:
+            print(f"The error '{e}' occurred")
+
+    def createDataBase(self):
+        try:
+            myCursor = self.connection.cursor()
+            myCursor.execute("CREATE DATABASE IF NOT EXISTS bbStats")
+        except Error as e:
+            print(f"The error '{e}' occurred")
+
+    def createScheduleTable(self):
+        query = "CREATE TABLE IF NOT EXISTS schedule (" \
+                "_id INTEGER NOT NULL AUTO_INCREMENT, date DATE, " \
+                "startTime VARCHAR(25)," \
+                "visitor VARCHAR(50)," \
+                "visitorPts Integer," \
+                "home VARCHAR(50)," \
+                "homePts INTEGER," \
+                "numOT INTEGER," \
+                "PRIMARY KEY (_id) )"
+        try:
+            myCursor = self.connection.cursor()
+            myCursor.execute(query)
+        except Error as e:
+            print(f" .createScheduleTable: The error '{e}' occurred")

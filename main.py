@@ -1,15 +1,26 @@
-import sys
+import mysql.connector
 import DatabaseTest
-from platform import python_version
-from basketball_reference_scraper.box_scores import get_box_scores
+
+PORT = 8000
 
 
-print(sys.version)
-
-
-def print_hi(name):
+def mainStart(name):
     # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+    print("Beginning main")  # Press Ctrl+F8 to toggle the breakpoint.
+
+
+mainStart("Temp")
+
+b1 = DatabaseTest.BBalldataBase()
+b1.myFunc()
+b1.connectToDb("localhost", "root", "root", "bbstats")
+b1.createDataBase()
+
+print("-----------------------------")
+print(b1.connection)
+print("-----------------------------")
+print(b1.createScheduleTable())
+print("-----------------------------")
 
 # # Press the green button in the gutter to run the script.
 # if __name__ == '__main__':
