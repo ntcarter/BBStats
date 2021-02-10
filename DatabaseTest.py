@@ -3,7 +3,6 @@ from mysql.connector import Error
 
 
 class BBalldataBase:
-
     connection = None
 
     def __init__(self):
@@ -27,7 +26,12 @@ class BBalldataBase:
 
     def createDataBase(self):
         try:
-            myCursor = self.connection.cursor()
+            tmpConnection = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                passwd="root"
+            )
+            myCursor = tmpConnection.cursor()
             myCursor.execute("CREATE DATABASE IF NOT EXISTS bbStats")
         except Error as e:
             print(f"The error '{e}' occurred")

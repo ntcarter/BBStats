@@ -12,9 +12,8 @@ def mainStart(name):
 mainStart("Temp")
 
 b1 = DatabaseTest.BBalldataBase()
-b1.myFunc()
-b1.connectToDb("localhost", "root", "root", "bbstats")
 b1.createDataBase()
+b1.connectToDb("localhost", "root", "root", "bbstats")
 
 print("-----------------------------")
 print(b1.connection)
