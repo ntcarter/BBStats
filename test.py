@@ -22,18 +22,18 @@ def get_schedule(season, playoffs=False):
     return df
 
 
-s = get_schedule(2019, playoffs=True)
+s = get_schedule(2021, playoffs=True)
 
 # all data Printed
 print(s)
 print("-----------------------------------------------------------")
 print("-----------------------------------------------------------")
 # date
-print(s['data'][1][0])
+print(s['data'][0][0])
 
 # Visitor
-print(s['data'][1][2])
+print(s['data'][0][2])
 
 # home
-print(s['data'][1][4])
+print(s['data'][0][4])
 print("-----------------------------------------------------------")
