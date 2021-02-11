@@ -28,6 +28,11 @@ s = get_schedule(2021, playoffs=True)
 print(s)
 print("-----------------------------------------------------------")
 print("-----------------------------------------------------------")
+print("Trying to get number of iterations:")
+indexLength = s['data']
+print("Length: ")
+for val in indexLength:
+    print(val)
 # date
 print(s['data'][0][0])
 #Start Time
