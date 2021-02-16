@@ -115,8 +115,3 @@ class BBalldataBase:
             df.to_csv(r'{}'.format(pathToCSVFile))
         except Error as e:
             print(f" .createScheduleTable: The error '{e}' occurred")
-
-    # Creates a new CSV at the path
-    def createSeasonCSV(self, season, pathToCSVFile):
-        df = self.get_schedule(season)
-        df.to_csv(r'{}'.format(pathToCSVFile))

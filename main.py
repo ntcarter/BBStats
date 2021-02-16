@@ -12,8 +12,6 @@ b1 = DatabaseTest.BBalldataBase()
 b1.createDataBase()
 b1.connectToDb("localhost", "root", "root", "bbstats")
 
-# b1.createSeasonCSV(2021, "PATH TO CSV HERE")
-
 print("-----------------------------")
 print(b1.connection)
 print("-----------------------------")
@@ -22,7 +20,7 @@ print("-----------------------------")
 print("*****************************")
 # b1.createSeasonCSVFromInternet(2021, "PATH TO CSV HERE")
 print("*****************************")
-b1.populateScheduleFromCSV("tmp", "tmp", "PATH TO CSV HERE")
+b1.populateScheduleFromCSV("tmp", "tmp", "PATH TO CSV")
 print("END OF MAIN")
 
 # # Press the green button in the gutter to run the script.
