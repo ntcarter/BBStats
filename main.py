@@ -1,5 +1,5 @@
 import DatabaseTest
-
+import GlobalLocals
 
 def mainStart(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -18,9 +18,15 @@ print("-----------------------------")
 print(b1.createScheduleTable())
 print("-----------------------------")
 print("*****************************")
-# b1.createSeasonCSVFromInternet(2021, "PATH TO CSV HERE")
+# b1.createSeasonCSVFromInternet(2015, "D:/githubDesktop/BBStats/BBStats/CSVFiles/season2015.csv")
 print("*****************************")
-b1.populateScheduleFromCSV("tmp", "tmp", "PATH TO CSV")
+b1.populateScheduleFromCSV(f"{GlobalLocals.PATH_TO_CSV_FOLDER}season2021.csv")
+b1.populateScheduleFromCSV(f"{GlobalLocals.PATH_TO_CSV_FOLDER}season2020.csv")
+b1.populateScheduleFromCSV(f"{GlobalLocals.PATH_TO_CSV_FOLDER}season2019.csv")
+b1.populateScheduleFromCSV(f"{GlobalLocals.PATH_TO_CSV_FOLDER}season2018.csv")
+b1.populateScheduleFromCSV(f"{GlobalLocals.PATH_TO_CSV_FOLDER}season2017.csv")
+b1.populateScheduleFromCSV(f"{GlobalLocals.PATH_TO_CSV_FOLDER}season2016.csv")
+b1.populateScheduleFromCSV(f"{GlobalLocals.PATH_TO_CSV_FOLDER}season2015.csv")
 print("END OF MAIN")
 
 # # Press the green button in the gutter to run the script.

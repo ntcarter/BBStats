@@ -2,7 +2,8 @@ import mysql.connector
 from mysql.connector import Error
 from bs4 import BeautifulSoup
 import pandas as pd
-from requests import get
+from selenium import webdriver
+import GlobalLocals
 import csv
 
 
@@ -64,42 +65,48 @@ class BBalldataBase:
         df = pd.DataFrame()
         for month in months:
             t = f'https://www.basketball-reference.com/leagues/NBA_{season}_games-{month.lower()}.html'
-            r = get(t)
-            if r.status_code == 200:
-                soup = BeautifulSoup(r.content, 'html.parser')
-                table = soup.find('table', attrs={'id': 'schedule'})
-                month_df = pd.read_html(str(table))[0]
-                df = df.append(month_df)
+            # need google chrome and chromium and chrome driver to run code. Get chromium here:
+            # https://chromedriver.chromium.org/downloads
+            driver = webdriver.Chrome(GlobalLocals.PATH_TO_CHROMIUM)
+            # downloads the html and renders the JS
+            driver.get(t)
+            html = driver.page_source
+            if html is not None:
+                soup = BeautifulSoup(html, 'html.parser')
+                # Look for the h1 tag which holds page not found text if the NBA didn't play that month
+                checkHeader = soup.find('h1')
+                if checkHeader.contents[0] != "Page Not Found (404 error)":
+                    table = soup.find('table', attrs={'id': 'schedule'})
+                    month_df = pd.read_html(str(table))[0]
+                    df = df.append(month_df)
+
         # returns the season data in a pandas DataFrame
         return df
 
     def insertIntoDB(self, dbReader):
-        lineCount = 0
-        for row in dbReader:
-            if lineCount == 0:
-                lineCount += 1
-            else:
-                # replace empty data with NaN
-                if row[8] == "":
-                    row[8] = "NaN"
-                if row[4] == "":
-                    row[4] = "NaN"
-                if row[6] == "":
-                    row[6] = "NaN"
 
+        for row in dbReader:
+            # replace empty data with NaN
+            if row[8] == "":
+                row[8] = "NaN"
+            if row[4] == "":
+                row[4] = "NaN"
+            if row[6] == "":
+                row[6] = "NaN"
+            if row[1] != "Date" and row[1] != "Playoffs":
                 query = "INSERT INTO bbstats.schedule (datePlayed, startTime, visitor, visitorPts, home, homePts, numOT)" \
                         f" VALUES('{row[1]}', '{row[2]}', '{row[3]}', '{row[4]}', '{row[5]}', '{row[6]}', '{row[8]}')"
-                print(query)
                 try:
                     myCursor = self.connection.cursor()
                     myCursor.execute(query)
                     self.connection.commit()
                 except Error as e:
                     print(f" .insertIntoDB: The error '{e}' occurred")
+                    print(f"Error: {row[8]}")
 
     # takes the input CSV and inserts it into the schedule database
     # This function assumes that the database has a valid schedule table
-    def populateScheduleFromCSV(self, seasonEndYear, includePlayoffs, CSVPath):
+    def populateScheduleFromCSV(self, CSVPath):
         # Try to open the CSV. If successful parse each row of the CSV and insert into the Schedule database
         try:
             with open(f'{CSVPath}') as csvFile:

@@ -1,11 +1,18 @@
 import pandas as pd
 from requests import get
 from bs4 import BeautifulSoup
+from selenium import webdriver
+
+
+driver = webdriver.Chrome("C:/Users/Ntcarter/Desktop/chromedriver_win32/chromedriver.exe")
+driver.get("https://www.basketball-reference.com/leagues/NBA_2020_games-october-2019.html")
+html = driver.page_source
+print(f"TT: {html}")
 
 print("begin")
 
 
-# get the schedule from the link in the fucntion
+# get the schedule from the link in the function
 def get_schedule(season, playoffs=False):
     months = ['October', 'November', 'December', 'January', 'February', 'March',
               'April', 'May', 'June']
@@ -35,16 +42,16 @@ for val in indexLength:
     print(val)
 # date
 print(s['data'][0][0])
-#Start Time
+# Start Time
 print(s['data'][0][1])
 # Visitor
 print(s['data'][0][2])
-#Visitor Points
+# Visitor Points
 print(s['data'][0][3])
 # home
 print(s['data'][0][4])
-#home Points
+# home Points
 print(s['data'][0][5])
-#num OT
+# num OT
 print(s['data'][0][7])
 print("-----------------------------------------------------------")
