@@ -5,6 +5,7 @@ import pandas as pd
 from selenium import webdriver
 import GlobalLocals
 import csv
+from basketball_reference_scraper.box_scores import get_box_scores
 
 
 # Connects to or creates an instance of the database and handles database queries
@@ -68,7 +69,7 @@ class BBalldataBase:
             # need google chrome and chromium and chrome driver to run code. Get chromium here:
             # https://chromedriver.chromium.org/downloads
             driver = webdriver.Chrome(GlobalLocals.PATH_TO_CHROMIUM)
-            # downloads the html and renders the JS
+            # downloads the html and renders the JS (the html is downloaded after JS renders)
             driver.get(t)
             html = driver.page_source
             if html is not None:
@@ -83,7 +84,7 @@ class BBalldataBase:
         # returns the season data in a pandas DataFrame
         return df
 
-    def insertIntoDB(self, dbReader):
+    def insertIntoSchedule(self, dbReader):
 
         for row in dbReader:
             # replace empty data with NaN
@@ -93,6 +94,7 @@ class BBalldataBase:
                 row[4] = "NaN"
             if row[6] == "":
                 row[6] = "NaN"
+            # Look for invalid data where row[1] contains the text "date" or "playoffs"
             if row[1] != "Date" and row[1] != "Playoffs":
                 query = "INSERT INTO bbstats.schedule (datePlayed, startTime, visitor, visitorPts, home, homePts, numOT)" \
                         f" VALUES('{row[1]}', '{row[2]}', '{row[3]}', '{row[4]}', '{row[5]}', '{row[6]}', '{row[8]}')"
@@ -111,7 +113,7 @@ class BBalldataBase:
         try:
             with open(f'{CSVPath}') as csvFile:
                 reader = csv.reader(csvFile, delimiter=',')
-                self.insertIntoDB(reader)
+                self.insertIntoSchedule(reader)
         except Error as e:
             print(f"ERROR: populateScheduleFromCSV the error '{e}' occured")
 
@@ -122,3 +124,24 @@ class BBalldataBase:
             df.to_csv(r'{}'.format(pathToCSVFile))
         except Error as e:
             print(f" .createScheduleTable: The error '{e}' occurred")
+
+    def createBoxScoreTable(self):
+        query = "CREATE TABLE IF NOT EXISTS boxscores( _boxId INTEGER NOT NULL AUTO_INCREMENT, " \
+                "_scheduleId INTEGER NOT NULL, players VARCHAR(25), mp VARCHAR(6), fg VARCHAR(3), fga VARCHAR(3)," \
+                " fgPercent VARCHAR(5), threeP VARCHAR(4), threePA VARCHAR(4), threePPercent VARCHAR(4), " \
+                "FT VARCHAR(4), FTA VARCHAR(4), FTPercent VARCHAR(4), ORB VARCHAR(4), DRB VARCHAR(4), TRB VARCHAR(4)," \
+                " AST VARCHAR(4), STL VARCHAR(4), BLK VARCHAR(4), TOV VARCHAR(4), PF VARCHAR(4), PTS VARCHAR(4), " \
+                "plusMinus VARCHAR(5),PRIMARY KEY (_boxId),FOREIGN KEY (_scheduleId) REFERENCES bbstats.schedule(_id) )"
+        try:
+            myCursor = self.connection.cursor()
+            myCursor.execute(query)
+        except Error as e:
+            print(f" .createScheduleTable: The error '{e}' occurred")
+
+    # things needed get_box_scores('2020-01-13', 'CHI', 'BOS', period='GAME', stat_type='BASIC')
+    def createBoxScoreCSVFromInternet(self, date, team1, team2):
+        # need to get teams and date from schedule table
+        # 8185 scheduled games in database each box score ~ 27 rows, so around 220995 rows
+        # though will only need to call API <8185 one per game played (not all games have been played)
+        s = get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC')
+
