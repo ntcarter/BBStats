@@ -103,7 +103,7 @@ class BBalldataBase:
                     myCursor.execute(query)
                     self.connection.commit()
                 except Error as e:
-                    print(f" .insertIntoDB: The error '{e}' occurred")
+                    print(f".insertIntoDB: The error '{e}' occurred")
                     print(f"Error: {row[8]}")
 
     # takes the input CSV and inserts it into the schedule database
@@ -115,7 +115,7 @@ class BBalldataBase:
                 reader = csv.reader(csvFile, delimiter=',')
                 self.insertIntoSchedule(reader)
         except Error as e:
-            print(f"ERROR: populateScheduleFromCSV the error '{e}' occured")
+            print(f"ERROR: populateScheduleFromCSV the error '{e}' occurred")
 
     # downloads a schedule and creates a csv file at path pathToCSVFile
     def createSeasonCSVFromInternet(self, seasonEndYear, pathToCSVFile):
